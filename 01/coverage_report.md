@@ -1,8 +1,8 @@
-Name                          Stmts   Miss  Cover   Missing
------------------------------------------------------------
-home_work_ex1.py                 18      1    94%   11
-home_work_ex2.py                 14      3    79%   10, 23-24
-tests/test_home_work_ex1.py      72      1    99%   121
-tests/test_home_work_ex2.py      64      2    97%   84, 131
------------------------------------------------------------
-TOTAL                           168      7    96%
+Name                  Stmts   Miss  Cover   Missing
+---------------------------------------------------
+file_filter.py           16      3    81%   10, 24-25
+predicator.py            19      2    89%   11, 41
+test_file_filter.py      82      2    98%   84, 176
+test_predicator.py       88      1    99%   149
+---------------------------------------------------
+TOTAL                   205      8    96%

@@ -4,7 +4,7 @@ Unit tests for the 'gen' function in the 'home_work_ex2' module.
 
 import unittest
 from unittest.mock import MagicMock
-from home_work_ex2 import gen
+from file_filter import gen
 import io
 
 
@@ -125,6 +125,52 @@ class TestGen(unittest.TestCase):
         self.assertEqual(result, ['а Роза упала на лапу Азора',
                                   'разора азора ароза и роза зорара',
                                   'ПРОЗА', 'рОзА'])
+
+    def test_multiply_filters_in_line(self):
+
+        lst = ['роза', 'азора']
+
+        mock_file = MagicMock(spec=io.TextIOWrapper)
+        mock_file.__iter__.return_value = ['а Роза упала на лапу Азора',
+                                           'разора азор а и зоро и зохан ароза и розаа зорара',
+                                           'раз о розалин РОСАТОМ роз а',
+                                           'РОЗАо и розамарин', 'рОзАы ароза', 'РОЗА и заноза с азора и роза по азора',
+                                           'АЗОРА и ссора мимозы роза', 'азора роза азора роза азора']
+        result = list(gen(mock_file, lst))
+
+        self.assertEqual(result, ['а Роза упала на лапу Азора',
+                                  'РОЗА и заноза с азора и роза по азора', 'АЗОРА и ссора мимозы роза',
+                                  'азора роза азора роза азора'])
+
+    def test_filter_is_full_equal_file_string(self):
+
+        lst = ['роза', 'азора']
+
+        mock_file = MagicMock(spec=io.TextIOWrapper)
+        mock_file.__iter__.return_value = ['РОЗА', 'АЗОРА', 'РОЗА\n',
+                                           'азора\b\n', 'рОзА\t\n', 'азора',
+                                           'розаазора', 'роз а', 'а зора']
+        result = list(gen(mock_file, lst))
+
+        self.assertEqual(result, ['РОЗА', 'АЗОРА', 'РОЗА',
+                                  'рОзА', 'азора'])
+
+    def test_filter_diff_registers(self):
+
+        lst = ['роза', 'азора', 'не избежать позора']
+
+        mock_file = MagicMock(spec=io.TextIOWrapper)
+        mock_file.__iter__.return_value = ['А РОЗА УПАЛА НА ЛАПУ АЗОРА',
+                                           'не всякий сумеет избежать позора',
+                                           'азорава розашка',
+                                           'АзОрА пока  РозА',
+                                           'РОза это не мимоза',
+                                           'не избежать позора']
+        result = list(gen(mock_file, lst))
+
+        self.assertEqual(result, ['А РОЗА УПАЛА НА ЛАПУ АЗОРА',
+                                  'АзОрА пока  РозА',
+                                  'РОза это не мимоза'])
 
 
 if __name__ == '__main__':

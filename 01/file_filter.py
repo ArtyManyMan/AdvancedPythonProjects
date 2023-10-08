@@ -17,8 +17,10 @@ def gen(f_obj, lst):
             tmp = line.lower().split()
             if el.lower() in tmp:
                 yield line.rstrip()
+                break
+    f_obj.close()
 
 
 def from_str_to_file_obj(st):
-    with open(file=st, mode='r', encoding='UTF-8', errors='replace') as f:
-        return f
+    f = open(file=st, mode='r', encoding='UTF-8', errors='replace')
+    return f

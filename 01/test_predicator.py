@@ -5,7 +5,7 @@ function in the 'home_work_ex1' module.
 
 import unittest
 from unittest import mock
-from home_work_ex1 import predict_message_mood, SomeModel
+from predicator import predict_message_mood, SomeModel
 
 
 class TestPredictMessageMood(unittest.TestCase):
@@ -89,19 +89,6 @@ class TestPredictMessageMood(unittest.TestCase):
             expected_message = 'Not float'
             self.assertEqual(str(context.exception), expected_message)
 
-    def test_threshold_changes(self):
-        mock_model = mock.Mock(spec=SomeModel)
-        mock_model.predict.return_value = 0.7
-
-        with self.assertRaises(ValueError):
-            predict_message_mood('Какой-то текст', mock_model, 0.99, 0.01)
-
-        with self.assertRaises(ValueError):
-            predict_message_mood('Какой-то текст', mock_model, 0.77, 0.77)
-
-        with self.assertRaises(ValueError):
-            predict_message_mood('Какой-то текст', mock_model, 0.11, 0.11)
-
     def test_predict_calls_check_expected_calls(self):
 
         mock_model = mock.Mock(spec=SomeModel)
@@ -115,6 +102,47 @@ class TestPredictMessageMood(unittest.TestCase):
 
         # проверяем вызов метода predict с ожидаемыми аргументами
         mock_model.predict.assert_has_calls(expected_calls)
+
+    def test_threshold_changes(self):
+        mock_model = mock.Mock(spec=SomeModel)
+        mock_model.predict.return_value = 0.7
+
+        with self.assertRaises(ValueError) as msg:
+            predict_message_mood('ТЕКСТ-ТЕКСТ', mock_model, 0.99, 0.01)
+        self.assertEqual("bad_thresholds can't be higher or equal good_thresholds", msg.exception.args[0])
+
+        with self.assertRaises(ValueError) as msg:
+            predict_message_mood('какой-то текст', mock_model, 0.7, 0.7)
+        self.assertEqual("bad_thresholds can't be higher or equal good_thresholds", msg.exception.args[0])
+
+        with self.assertRaises(ValueError) as msg:
+            predict_message_mood('ещё текст', mock_model, 0.11, 0.11)
+        self.assertEqual("bad_thresholds can't be higher or equal good_thresholds", msg.exception.args[0])
+
+        with self.assertRaises(ValueError):
+            predict_message_mood('ещё текст', mock_model, 1, 0)
+        self.assertEqual("bad_thresholds can't be higher or equal good_thresholds", msg.exception.args[0])
+
+        mock_model.predict.side_effect = [0.22, 0.11, 0.3, 1.0, 0.74, 0.0, 1.0]
+
+        expected_calls = [mock.call('Пурпурная вода'),
+                          mock.call('Лесная ягода'),
+                          mock.call('Золотая орда'),
+                          mock.call('Защитник рода'),
+                          mock.call('закрыть/открыть ворота'),
+                          mock.call('термальная погода'),
+                          mock.call('Кольцо принёс? Фродо!')
+                          ]
+
+        self.assertEqual('отл', predict_message_mood('Пурпурная вода', mock_model, 0.1, 0.2))
+        self.assertEqual('норм', predict_message_mood('Лесная ягода', mock_model, 0.11, 0.12))
+        self.assertEqual('неуд', predict_message_mood('Золотая орда', mock_model, 0.5, 0.55))
+        self.assertEqual('отл', predict_message_mood('Защитник рода', mock_model, 0.01, 0.99))
+        self.assertEqual('норм', predict_message_mood('закрыть/открыть ворота', mock_model, 0.70, 0.75))
+        self.assertEqual('неуд', predict_message_mood('термальная погода', mock_model, 0.4, 0.404))
+        self.assertEqual('норм', predict_message_mood('Кольцо принёс? Фродо!', mock_model, 0.0, 1.0))
+
+        self.assertEqual(expected_calls, mock_model.predict.mock_calls)
 
 
 if __name__ == '__main__':

@@ -23,7 +23,7 @@ def predict_message_mood(
         raise TypeError('Do not belong class SomeModel')
 
     if bad_thresholds >= good_thresholds:
-        raise ValueError("bad_thresholds can't be higher than good_thresholds")
+        raise ValueError("bad_thresholds can't be higher or equal good_thresholds")
 
     result_predict = model.predict(message)
 
@@ -38,4 +38,5 @@ def predict_message_mood(
         return 'норм'
 
 
-model = SomeModel()
+if __name__ == '__main__':
+    model = SomeModel()
