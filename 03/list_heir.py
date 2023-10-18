@@ -5,9 +5,6 @@ subtraction, comparison, and a custom string representation."""
 
 class CustomList(list):
 
-    def __init__(self, val):
-        super().__init__(val)
-
     def __add__(self, other):
         if not isinstance(other, CustomList):
             other = CustomList(other)
@@ -56,6 +53,10 @@ class CustomList(list):
     def __le__(self, other):
         arg1, arg2 = self.sum_centr(self, other)
         return arg1 <= arg2
+
+    def __ge__(self, other):
+        arg1, arg2 = self.sum_centr(self, other)
+        return arg1 >= arg2
 
     def __gt__(self, other):
         arg1, arg2 = self.sum_centr(self, other)
