@@ -20,7 +20,7 @@ def average_time_deco(k):
                 lst_times.pop(0)
 
             if len(lst_times) < k:
-                print('Количество вызовов меньше необходимого числа')
+                print(f'Среднее время выполнения последних {len(lst_times)} вызовов: {sum(lst_times) / len(lst_times)} секунд')
             else:
                 avg_time = sum(lst_times) / len(lst_times)
                 print(f'Среднее время выполнения последних {k} вызовов: {avg_time} секунд')

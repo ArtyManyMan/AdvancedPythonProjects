@@ -6,10 +6,10 @@ import time
 import unittest
 from unittest import mock
 from unittest.mock import patch
-from h_w2 import my_function, average_time_deco
+from time_measurement_decorators import my_function, average_time_deco
 
 
-class TestHW21(unittest.TestCase):
+class TestAvgTimeDeco(unittest.TestCase):
     """A test case class for testing the 'my_function' function and 'average_time_deco' decorator."""
 
     def test_common_behavior_decorated_foo(self):
@@ -38,29 +38,35 @@ class TestHW21(unittest.TestCase):
         def some_function():
             time.sleep(1)
 
-        # Check if the decorator prints the average time
+        # сheck if the decorator prints the average time
         with patch('builtins.print') as mock_print:
             for _ in range(call_num):
                 some_function()
+                res = ' '.join(mock_print.call_args[0][0].split()[-2:])
                 if _ < call_num - 1:
-                    mock_print.assert_called_with('Количество вызовов меньше необходимого числа')
+                    mock_print.assert_called_with(f'Среднее время выполнения последних {_ + 1} вызовов: ' + res)
                 else:
-                    res = ' '.join(mock_print.call_args[0][0].split()[-2:])
                     mock_print.assert_called_with(f'Среднее время выполнения последних {call_num} вызовов: ' + res)
             self.assertEqual(call_num, mock_print.call_count)
 
-    def test_decorator_with_insufficient_calls(self):
 
+    def test_decorator_with_insufficient_calls(self):
         @average_time_deco(3)
         def another_function():
             pass
 
-        # Check if the decorator prints a message when there are insufficient calls
+        # сheck if the decorator prints a message when there are insufficient calls
         with patch('builtins.print') as mock_print:
             another_function()
             self.assertTrue(mock_print.called)
             last_print_call = mock_print.call_args[0][0]
-            self.assertTrue(last_print_call, "Количество вызовов меньше необходимого числа")
+        self.assertIn('Среднее время выполнения последних 1 вызовов: ', last_print_call)
+
+        with patch('builtins.print') as mock_print:
+            another_function()
+            self.assertTrue(mock_print.called)
+            last_print_call = mock_print.call_args[0][0]
+        self.assertIn('Среднее время выполнения последних 2 вызовов: ', last_print_call)
 
     @patch('time.time')
     def test_decorator_time_calls(self, mock_time):
@@ -74,7 +80,7 @@ class TestHW21(unittest.TestCase):
             time.sleep(1)
             return res
 
-        # Configure mock_time to return values
+        # сonfigure mock_time to return values
         mock_time.side_effect = [0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0]
 
         with patch('builtins.print') as mock_print:
@@ -88,14 +94,16 @@ class TestHW21(unittest.TestCase):
         expected_calls_time = [mock.call()] * 10
 
         expected_calls_print = [
-            mock.call('Количество вызовов меньше необходимого числа'),
-            mock.call('Количество вызовов меньше необходимого числа'),
-            mock.call('Количество вызовов меньше необходимого числа'),
+            mock.call('Среднее время выполнения последних 1 вызовов: 2.0 секунд'),
+            mock.call('Среднее время выполнения последних 2 вызовов: 2.0 секунд'),
+            mock.call('Среднее время выполнения последних 3 вызовов: 2.0 секунд'),
+            mock.call('Среднее время выполнения последних 4 вызовов: 2.0 секунд'),
             mock.call(mock_print.call_args[0][0])
         ]
 
         mock_time.assert_has_calls(expected_calls_time)
         mock_print.assert_has_calls(expected_calls_print)
+        self.assertEqual(expected_calls_print, mock_print.mock_calls)
 
     def test_avg_time_deco_zero_division(self):
 
@@ -119,7 +127,7 @@ class TestHW21(unittest.TestCase):
             with self.assertRaises(ValueError):
                 function_with_exception()
 
-        # Проверяем, что исключение было передано наверх
+        # check if the exception was propagated upwards
         self.assertFalse(mock_print.called)
 
 

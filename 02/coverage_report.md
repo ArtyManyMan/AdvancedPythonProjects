@@ -1,8 +1,8 @@
-Name           Stmts   Miss  Cover   Missing
---------------------------------------------
-h_w1.py           14      2    86%   8, 16
-h_w2.py           24      0   100%
-test_h_w1.py      54      1    98%   114
-test_h_w2.py      77      1    99%   127
---------------------------------------------
-TOTAL            169      4    98%
+Name                                  Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------
+json_parser_utils.py                     14      2    86%   8, 16
+test_json_parser_utils.py                96      1    99%   202
+test_time_measurement_decorators.py      83      1    99%   135
+time_measurement_decorators.py           24      0   100%
+-------------------------------------------------------------------
+TOTAL                                   217      4    98%

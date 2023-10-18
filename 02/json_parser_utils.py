@@ -4,8 +4,8 @@ parsing JSON data and searching for keywords within JSON fields.'''
 import json
 
 
-def func(word):
-    return word
+def func(required_field, keyword):
+    return (required_field, keyword)
 
 
 def parse_json(json_str: str, required_fields=None, keywords=None, keyword_callback=None):
@@ -22,5 +22,5 @@ def parse_json(json_str: str, required_fields=None, keywords=None, keyword_callb
             words = json_doc[field].lower().split()
             for keyword in keywords:
                 if keyword.lower() in words:
-                    keyword_callback(keyword)
+                    keyword_callback(required_field=field, keyword=keyword)
     return
