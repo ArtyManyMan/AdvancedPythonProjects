@@ -72,6 +72,43 @@ class TestCustomMeta(unittest.TestCase):
         inst.dynamic = "updated"
         self.assertEqual(inst.custom_dynamic, "updated")
 
+    def test_add_magic_methods_args(self):
+
+        def __hash__(self):
+            return 'CHECK'
+
+        CustomClass.__hash__ = __hash__
+        self.assertEqual(CustomClass.__hash__(CustomClass), 'CHECK')
+        with self.assertRaises(AttributeError):
+            CustomClass.custom___hash__()
+
+        inst = CustomClass()
+        def __hash__(self):
+            return 'CHECK'
+
+        inst.__hash__ = __hash__
+
+        self.assertEqual(inst.__hash__(inst), 'CHECK')
+
+        with self.assertRaises(AttributeError):
+            inst.custom___hash__()
+
+        __dict__ = {1: 111}
+
+        inst.__dict__ = __dict__
+
+        self.assertEqual(inst.__dict__, {1: 111})
+        self.assertEqual(inst.custom_x, 50)
+        self.assertEqual(inst.custom_line(), 100)
+
+        with self.assertRaises(AttributeError):
+            inst.custom___dict__()
+
+        with self.assertRaises(AttributeError):
+            x = inst.x
+
+        with self.assertRaises(AttributeError):
+            x = inst.line()
 
 if __name__ == '__main__':
     unittest.main()

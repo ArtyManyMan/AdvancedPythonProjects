@@ -13,7 +13,12 @@ class CustomMeta(type):
     def __setattr__(self, key, value):
         if key.startswith('custom_') and hasattr(self, key):
             delattr(self, key)
-        self.__dict__[f'custom_{key}'] = value
+
+        if not (key.startswith('__') and key.endswith('__')):
+            self.__dict__[f'custom_{key}'] = value
+            return
+
+        super(type(self), self).__setattr__(key, value)
 
     @classmethod
     def __prepare__(metacls, name, bases):
