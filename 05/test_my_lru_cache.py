@@ -81,7 +81,7 @@ class TestLRUCache(unittest.TestCase):
         self.assertIsNone(lru_cache.get(3))
         self.assertEqual(4, lru_cache.get(4))
 
-    def test_get_and_set_with_different_limits(self):
+    def test_get_and_set_with_limit_3(self):
 
         cache = LRUCache(3)
 
@@ -111,6 +111,8 @@ class TestLRUCache(unittest.TestCase):
         self.assertEqual("val5", cache.get("k5"))
         self.assertEqual("val6", cache.get("k6"))
 
+    def test_get_and_set_with_limit_5(self):
+
         new_cache = LRUCache(5)
 
         new_cache.set("k5", "val5")
@@ -137,6 +139,8 @@ class TestLRUCache(unittest.TestCase):
         new_cache.set("k5", "val5")
         self.assertIsNone(new_cache.get("k0"))
         self.assertEqual("val5", new_cache.get("k5"))
+
+    def test_get_and_set_with_limit_7(self):
 
         new_cache = LRUCache(7)
 
@@ -257,24 +261,24 @@ class TestLRUCache(unittest.TestCase):
 
         cache.set("k1", "val1")
         self.assertEqual(1, len(cache._LRUCache__cache_table))
-        self.assertEqual(1, cache._LRUCache__current_size)
+
         self.assertEqual({"k1": "val1"}, cache._LRUCache__cache_table)
 
         cache.set("k2", "val2")
         self.assertEqual(2, len(cache._LRUCache__cache_table))
-        self.assertEqual(2, cache._LRUCache__current_size)
+
         self.assertEqual({"k1": "val1", "k2": "val2"}, cache._LRUCache__cache_table)
 
         cache.set("k3", "val3")
         self.assertEqual(3, len(cache._LRUCache__cache_table))
-        self.assertEqual(3, cache._LRUCache__current_size)
+
         self.assertEqual({"k1": "val1", "k2": "val2", "k3": "val3"}, cache._LRUCache__cache_table)
 
         self.assertEqual(3, cache._LRUCache__limit)
 
         cache.set("k4", "val4")
         self.assertEqual(3, len(cache._LRUCache__cache_table))
-        self.assertEqual(3, cache._LRUCache__current_size)
+
         self.assertEqual({"k2": "val2", "k3": "val3", "k4": "val4"}, cache._LRUCache__cache_table)
 
         self.assertIsNone(cache.get("k1"))
