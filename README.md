@@ -58,6 +58,7 @@ def keyword_callback(required_field, keyword):
     print(f"Keyword found in '{required_field}': {keyword}")
 
 json_parser_utils.parse_json(json_str, required_fields, keywords, keyword_callback)
+```python
 
 ## Задача 2: Декоратор измерения времени выполнения (02/time_measurement_decorators.py)
 
@@ -80,4 +81,4 @@ def my_function(arg):
 # Вызов декорированной функции
 result = my_function("Walter")
 print(result)
-
+```python
