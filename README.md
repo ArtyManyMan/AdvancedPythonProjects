@@ -35,3 +35,49 @@
 
 ### Тестирование (test_predicator.py)
 Модуль `test_predicator.py` содержит юнит-тесты для функции `predict_message_mood` в файле `predicator.py`.
+
+# Папка 02: Парсер JSON и Декоратор для измерения времени выполнения функции
+
+## Задача 1: Парсер JSON (02/json_parser_utils.py)
+
+Модуль `json_parser_utils.py` предоставляет утилитарные функции для разбора JSON-данных и поиска ключевых слов в полях JSON.
+
+### Описание
+Этот модуль предназначен для обработки JSON-данных и поиска ключевых слов в определенных полях. Он предоставляет функцию `parse_json`, которая принимает JSON-строку, список обязательных полей, список ключевых слов и функцию обратного вызова для каждого найденного ключевого слова. Модуль также включает вспомогательную функцию `func`, предназначенную для обработки результатов поиска.
+
+### Использование
+```python
+import json_parser_utils
+
+# Пример использования
+json_str = '{"key1": "Word1 word2", "key2": "word2 word3"}'
+required_fields = ["key1", "key2"]
+keywords = ["word2", "word3"]
+
+def keyword_callback(required_field, keyword):
+    print(f"Keyword found in '{required_field}': {keyword}")
+
+json_parser_utils.parse_json(json_str, required_fields, keywords, keyword_callback)
+
+## Задача 2: Декоратор измерения времени выполнения (02/time_measurement_decorators.py)
+
+Модуль `time_measurement_decorators.py` предоставляет декоратор для измерения и отчета о среднем времени выполнения декорированной функции за несколько вызовов.
+
+### Описание
+Этот модуль предназначен для измерения среднего времени выполнения функции за несколько вызовов с использованием декоратора. Он включает функцию-декоратор `average_time_deco`, принимающую параметр `k` - количество последних вызовов для расчета среднего времени. Модуль также содержит пример использования декоратора с функцией `my_function`.
+
+### Использование
+```python
+import time_measurement_decorators
+
+# Пример использования
+@time_measurement_decorators.average_time_deco(5)
+def my_function(arg):
+    res = arg + " White! You're goddamn right"
+    time.sleep(1)
+    return res
+
+# Вызов декорированной функции
+result = my_function("Walter")
+print(result)
+
