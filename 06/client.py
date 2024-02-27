@@ -12,8 +12,8 @@ class TCPClient:
         self.filename = filename
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((ip, port))
-        self.lock = threading.Lock()
-        self.que = Queue()
+        self.lock = threading.RLock()
+        self.que = Queue(maxsize=20)
         threading.Thread(target=self.file_reader).start()
         threading.Thread(target=self.worker).start()
         self.reciver()
@@ -25,15 +25,18 @@ class TCPClient:
     def file_reader(self):
         with open(self.filename, 'r') as file:
             for i in file:
-                self.que.put(i)
+                self.que.put(i, block=True)
             for j in range(self.quantity_th):
                 self.que.put(None)
     def extractor(self):
         while True:
-            msg = self.que.get()
-            if msg is None:
-                break
-            self.sender_msg(msg)
+            try:
+                msg = self.que.get()
+                if msg is None:
+                    break
+                self.sender_msg(msg)
+            except Exception as e:
+                print(e, 'Непредвиденная ошибка')
 
     def worker(self):
 

@@ -111,7 +111,7 @@ class TCPServer:
                 continue
 
     def words_counter(self, text, url, client_socket):
-        res = {}
+        res = {'url': url}
         sorted_words = Counter(text.split()).most_common()
         for i in range(self.k_words):
             if len(sorted_words) > i:
